@@ -1,0 +1,8 @@
+{
+    "defaultSeverity": "error",
+    "exteds": ["tsling:recommended"],
+    "rules": {
+        "semicolon": false,
+        "trailing-comma": false
+    }
+}
