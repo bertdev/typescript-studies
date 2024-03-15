@@ -5,3 +5,4 @@ const i: unique symbol = Symbol("f"); //typeof {var-name}
 
 //js always create a new unique symbol, even if you use the same base value
 //Symbol("a") === Symbol("a") -> false
+//an variable unique symbol will never be equals to any other unique symbol
