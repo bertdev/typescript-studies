@@ -88,3 +88,134 @@ function fancyDateFormat(this: Date) {
     return `${this.getDate()}/${this.getMonth()}/${this.getFullYear()}`;
 }
 console.log(fancyDateFormat.call(new Date));
+
+// ---- generator functions ----
+// generator is a function that can produce values on demand
+// only when you ask for it so, after send you the value, his execution
+// will stop until next call
+
+function* createFibonacciGenerator(): IterableIterator<number> {
+    let a = 0;
+    let b = 1;
+    while (b < 8) {
+        yield a;
+        [a, b] = [b, a + b];
+    }
+}
+
+let fibonacciGenerator = createFibonacciGenerator();
+console.log(fibonacciGenerator.next());
+console.log(fibonacciGenerator.next());
+console.log(fibonacciGenerator.next());
+console.log(fibonacciGenerator.next());
+console.log(fibonacciGenerator.next());
+
+// ---- iterators ----
+// itarable is any object that contains a property called Symbol.iterator,
+// whose values is a function that returns an iterators
+//
+// iterator is any object that defines a method called next, which returns
+// an object with properties value and done
+//
+//when create a generator function it returns an iterable iterator, because
+//it implements Symbol.iterator and next method 
+
+//iterator manual definition
+
+let numbers = {
+    *[Symbol.iterator]() {
+        for (let n = 1; n <= 3; n++) {
+            yield n;
+        }
+    }
+};
+
+//when you use for of, you are actualy using built in iterators from javascript
+
+for (let a of numbers) {
+    console.log(a);
+}
+
+// ---- call signatures ----
+
+// (first: number, second: number) => number is the function type annotation
+// its only type level code so parameters names are not affected by the name used in annotation
+let sub: (first: number, second: number) => number = (a: number, b: number): number => {
+    return a - b;
+}
+
+type Greet = (name: string) => string;
+// shorthand call signature
+type Log = (message: string, userId?: string) => void;
+// full call signature
+type SumVariadicSafe = {
+    (...numbers: number[]): number;
+}
+
+let greet: Greet = (name) => `Hello ${name}`;
+console.log(greet("Herbert"));
+
+// ---- contextual typing ----
+// in some contexts you does not have to type your code
+// typescript can infer its type by context like in the variable greet
+// we did not annotate the parameter name or the function return
+// typescript infer it for us
+
+function times(
+    f: (index: number) => void,
+    n: number
+) {
+    for (let i = 0; i < n; i++) {
+        f(i);
+    }
+}
+
+// typescript will infer the type of any by the context
+times(n => console.log(n), 4);
+
+// ---- overloaded function type ----
+//
+// have multiple type annotations for one function
+
+type Reservation = {};
+type Reserve = {
+    (from: Date, to: Date, destination: string): Reservation;
+    (from: Date, destination: string): Reservation;
+}
+
+let reserve: Reserve = (
+    from: Date, 
+    to: Date | string, 
+    destination?: string
+) => {
+    if (to instanceof Date) {
+        to.getMonth();
+    }
+    console.log(from, to, destination);
+    return {};
+}
+
+type HTMLAnchorElement = "<a>";
+type HTMLCanvasElement = "<canvas>";
+type HTMLTableElement = "<table>";
+type HTMLElement = string;
+type CreateElement = {
+    (element: "<a>"): HTMLAnchorElement;
+    (element: "<canvas>"): HTMLCanvasElement;
+    (element: "<table>"): HTMLTableElement;
+    (element: string): HTMLElement;
+}
+
+let createElement: CreateElement = (element: string): HTMLElement => {
+}
+
+// function overloading can be on function declaration too
+
+function createElements(tag: "a"): HTMLAnchorElement
+function createElements(tag: "canvas"): HTMLCanvasElement
+function createElements(tag: "table"): HTMLTableElement
+function createElements(tag: string): HTMLElement {
+    return ""
+}
+
+createElements("table");
